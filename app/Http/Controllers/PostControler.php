@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 use App\Post;
 
 class PostControler extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::unpublished()->get();
         //dd($posts);
         info($posts);
         return view("posts", compact("posts"));
@@ -19,6 +21,9 @@ class PostControler extends Controller
     {
         $post = POst::findOrFail($id);
         //dd($post);
+        if ($post->is_published) {
+            throw new ModelNotFoundException;
+        }
         return view("post", compact('post'));
     }
 }
